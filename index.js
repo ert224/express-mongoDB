@@ -30,7 +30,6 @@ app.post('/api/products', async (req, res) => {
 });
 
 app.get('/api/products', async (req, res) => {
-    console.log(req.body);
     try{
         const product = await Product.find({})
         res.status(200).json (product)
@@ -39,5 +38,56 @@ app.get('/api/products', async (req, res) => {
             message: error.message
         })
 
+    }
+});
+
+app.get('/api/products/:id', async (req, res) => {
+    try{
+        const {id} = req.params;
+        const product = await Product.findById(id)
+        res.status(200).json (product)
+    }catch(error){
+        res.status(500).json({
+            message: error.message
+        })
+
+    }
+});
+
+
+app.put('/api/products/:id', async (req, res) => {
+    try{
+        const {id} = req.params;
+        const product = await Product.findByIdAndUpdate(id, req.body)
+        if (!product){
+            return res.status(404).json({
+                message: "product not found"
+            })
+        }
+        const updatedProd = await Product.findById(id)
+        res.status(200).json (updatedProd)
+    }catch(error){
+        res.status(500).json({
+            message: error.message
+        })
+    }
+});
+
+app.delete('/api/products/:id', async (req, res) => {
+    try{
+        const {id} = req.params;
+        const product = await Product.findByIdAndDelete(id, req.body)
+        if (!product){
+            return res.status(404).json({
+                message: "product not found"
+            })
+        }
+        res.status(200).json ({
+            message: "Product deleted"
+        })
+    }catch(error){
+        res.status(500).json({
+            message: error.message
+        })
     }
 });
